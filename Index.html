@@ -121,7 +121,7 @@
       align-items: center;
       gap: 8px;
       padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 0;
       background: var(--surface);
       box-shadow: var(--shadow);
     }
@@ -144,16 +144,18 @@
     }
 
     .board {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      display: flex;
+      align-items: stretch;
       min-height: calc(100vh - 108px);
+      overflow-x: auto;
       background: var(--surface);
     }
 
     .column {
+      flex: 0 0 300px;
       min-height: 420px;
       border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 0;
       background: var(--surface);
     }
 
@@ -162,6 +164,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      min-height: 60px;
       padding: 14px 16px 12px;
       border-bottom: 3px solid var(--type-color, var(--accent));
       background: linear-gradient(135deg, var(--type-bg, rgba(59, 130, 246, 0.12)), transparent 90%);
@@ -189,14 +192,14 @@
     .add-form {
       position: relative;
       padding: 10px 8px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 0;
     }
 
     .add-input {
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 10px 42px 10px 12px;
+      padding: 10px 12px;
       color: var(--text);
       background: var(--input);
       outline: none;
@@ -207,57 +210,63 @@
       box-shadow: 0 0 0 3px var(--type-focus, rgba(59, 130, 246, 0.18));
     }
 
-    .add-button {
-      position: absolute;
-      top: 16px;
-      right: 14px;
-      width: 30px;
-      height: 30px;
-      border-radius: 7px;
-      color: #ffffff;
-      background: var(--type-color, var(--accent));
-      font-size: 20px;
-      line-height: 28px;
-    }
-
     .entries {
       display: grid;
-      gap: 8px;
-      padding: 10px 8px 18px;
+      gap: 10px;
+      padding: 6px 8px 18px;
     }
 
     .entry {
       position: relative;
-      padding: 10px 38px 10px 10px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
+      min-height: 42px;
+      padding: 11px 42px 10px 14px;
+      border-left: 3px solid var(--type-color, var(--accent));
+      border-radius: 9px;
       background: var(--surface-muted);
       overflow-wrap: anywhere;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .entry:hover {
+      transform: translateY(-1px);
+      background: var(--type-hover, var(--surface-muted));
     }
 
     .entry-data {
-      margin-bottom: 5px;
       white-space: pre-wrap;
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1.35;
     }
 
     .entry-meta {
+      margin-top: 4px;
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
     }
 
     .delete-button {
       position: absolute;
-      top: 8px;
-      right: 8px;
+      top: 9px;
+      right: 10px;
       width: 24px;
       height: 24px;
-      border-radius: 50%;
+      border-radius: 6px;
+      color: #9ca3af;
+      background: transparent;
+      font-size: 20px;
+      line-height: 20px;
+      opacity: 0;
+      transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease;
+    }
+
+    .entry:hover .delete-button,
+    .entry:focus-within .delete-button {
+      opacity: 1;
+    }
+
+    .delete-button:hover {
       color: #ffffff;
       background: var(--danger);
-      font-size: 16px;
-      line-height: 22px;
     }
 
     .toast {
@@ -305,8 +314,8 @@
         max-width: none;
       }
 
-      .board {
-        grid-template-columns: 1fr;
+      .column {
+        flex-basis: 88vw;
       }
     }
   </style>
@@ -458,17 +467,10 @@
       const input = document.createElement('input');
       input.type = 'text';
       input.className = 'add-input';
-      input.placeholder = 'Введите данные';
+      input.placeholder = 'Введите ID...';
       input.autocomplete = 'off';
 
-      const button = document.createElement('button');
-      button.type = 'submit';
-      button.className = 'add-button';
-      button.textContent = '+';
-      button.setAttribute('aria-label', 'Добавить запись в ' + actionType);
-
       form.appendChild(input);
-      form.appendChild(button);
 
       const entries = document.createElement('div');
       entries.className = 'entries';
@@ -652,6 +654,7 @@
       element.style.setProperty('--type-color', color);
       element.style.setProperty('--type-bg', hexToRgba(color, document.body.classList.contains('theme-dark') ? 0.18 : 0.12));
       element.style.setProperty('--type-focus', hexToRgba(color, 0.18));
+      element.style.setProperty('--type-hover', hexToRgba(color, document.body.classList.contains('theme-dark') ? 0.2 : 0.1));
     }
 
     function getTypeColor(index) {
