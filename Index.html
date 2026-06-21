@@ -7,18 +7,22 @@
   <title>Ежедневный отчет</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --panel: #111827;
-      --panel-light: #1f2937;
-      --border: #334155;
-      --text: #e5e7eb;
+      --bg: #070b18;
+      --bg-soft: #0f172a;
+      --panel: rgba(15, 23, 42, 0.86);
+      --panel-strong: rgba(17, 24, 39, 0.96);
+      --panel-light: rgba(30, 41, 59, 0.9);
+      --border: rgba(148, 163, 184, 0.18);
+      --border-strong: rgba(125, 211, 252, 0.28);
+      --text: #f8fafc;
       --muted: #94a3b8;
       --accent: #38bdf8;
-      --accent-dark: #0284c7;
-      --danger: #ef4444;
-      --danger-dark: #b91c1c;
-      --success: #22c55e;
-      --warning: #f59e0b;
+      --accent-2: #a78bfa;
+      --danger: #fb7185;
+      --danger-dark: #e11d48;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
     }
 
     * {
@@ -28,146 +32,304 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Arial, sans-serif;
+      font-family: Inter, Arial, sans-serif;
       color: var(--text);
-      background: radial-gradient(circle at top left, #1e3a8a 0, transparent 34rem), var(--bg);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.26), transparent 28rem),
+        radial-gradient(circle at 100% 10%, rgba(167, 139, 250, 0.24), transparent 28rem),
+        linear-gradient(135deg, #020617 0%, var(--bg) 45%, #111827 100%);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
     }
 
     .app {
       width: 100%;
-      max-width: 1800px;
+      max-width: 1840px;
       margin: 0 auto;
-      padding: 24px;
+      padding: 28px;
     }
 
-    .topbar {
+    .hero {
       position: sticky;
       top: 0;
       z-index: 10;
+      margin-bottom: 18px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(30, 41, 59, 0.82));
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-top {
       display: flex;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 18px;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
-      padding: 16px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: rgba(15, 23, 42, 0.92);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+      margin-bottom: 18px;
+    }
+
+    .title-block {
+      display: grid;
+      gap: 6px;
     }
 
     h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: clamp(26px, 3vw, 40px);
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
     }
 
     .controls {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      align-items: center;
+      align-items: end;
+      justify-content: flex-end;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
     }
 
     label {
-      color: var(--muted);
-      font-size: 14px;
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
     }
 
     select,
     input {
       width: 100%;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 11px 12px;
+      border-radius: 14px;
+      padding: 12px 13px;
       color: var(--text);
-      background: #020617;
+      background: rgba(2, 6, 23, 0.76);
       outline: none;
+      transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     }
 
     select:focus,
     input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+      background: rgba(2, 6, 23, 0.95);
+      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.16);
     }
 
     .employee-select {
-      min-width: 240px;
+      min-width: 260px;
     }
 
     .status {
-      min-width: 150px;
-      padding: 10px 12px;
+      min-width: 168px;
+      padding: 13px 15px;
+      border: 1px solid rgba(52, 211, 153, 0.24);
       border-radius: 999px;
-      font-weight: 700;
+      font-weight: 800;
       text-align: center;
-      background: rgba(34, 197, 94, 0.15);
+      background: rgba(16, 185, 129, 0.14);
       color: var(--success);
     }
 
     .status.busy {
-      background: rgba(245, 158, 11, 0.16);
+      border-color: rgba(251, 191, 36, 0.3);
+      background: rgba(251, 191, 36, 0.14);
       color: var(--warning);
     }
 
     .status.error {
-      background: rgba(239, 68, 68, 0.16);
-      color: #fecaca;
+      border-color: rgba(251, 113, 133, 0.3);
+      background: rgba(251, 113, 133, 0.14);
+      color: #fecdd3;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(2, 6, 23, 0.36);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .stat-value {
+      margin-top: 4px;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .settings {
+      margin-bottom: 18px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.66);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .settings summary {
+      cursor: pointer;
+      color: #e0f2fe;
+      font-weight: 900;
+      list-style: none;
+    }
+
+    .settings summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .settings summary::after {
+      content: '▾';
+      margin-left: 8px;
+      color: var(--accent);
+    }
+
+    .settings[open] summary::after {
+      content: '▴';
+    }
+
+    .settings-help {
+      margin: 8px 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .visibility-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .ghost-button {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 9px 12px;
+      color: var(--text);
+      background: rgba(15, 23, 42, 0.82);
+    }
+
+    .ghost-button:hover:not(:disabled) {
+      border-color: var(--border-strong);
+      background: rgba(14, 165, 233, 0.14);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 9px 12px;
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 999px;
+      color: #e0f2fe;
+      background: rgba(56, 189, 248, 0.1);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .chip input {
+      width: auto;
+      accent-color: var(--accent);
+    }
+
+    .chip.is-hidden {
+      border-color: rgba(148, 163, 184, 0.16);
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.58);
     }
 
     .board {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 18px;
       align-items: start;
     }
 
     .column {
-      min-height: 220px;
+      min-height: 240px;
       padding: 16px;
       border: 1px solid var(--border);
-      border-radius: 18px;
-      background: rgba(17, 24, 39, 0.94);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.98), rgba(15, 23, 42, 0.9));
+      box-shadow: 0 16px 46px rgba(0, 0, 0, 0.23);
     }
 
     .column-header {
       display: flex;
       gap: 12px;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       margin-bottom: 14px;
     }
 
+    .column-title-wrap {
+      display: grid;
+      gap: 4px;
+    }
+
     .column-title {
       margin: 0;
-      font-size: 17px;
+      font-size: 18px;
       color: #f8fafc;
     }
 
+    .column-hint {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     .counter {
-      min-width: 32px;
-      padding: 5px 9px;
+      min-width: 38px;
+      padding: 7px 10px;
       border-radius: 999px;
       text-align: center;
       color: #082f49;
-      background: var(--accent);
-      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #67e8f9);
+      font-weight: 900;
+      box-shadow: 0 8px 24px rgba(56, 189, 248, 0.22);
     }
 
     .add-form {
       display: grid;
-      grid-template-columns: 1fr 44px;
-      gap: 8px;
+      grid-template-columns: 1fr 48px;
+      gap: 9px;
       margin-bottom: 14px;
     }
 
     button {
       border: 0;
       cursor: pointer;
-      font-weight: 800;
-      transition: transform 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+      font-weight: 900;
+      transition: transform 0.15s ease, background 0.15s ease, opacity 0.15s ease, border-color 0.15s ease;
     }
 
     button:hover:not(:disabled) {
@@ -180,15 +342,16 @@
     }
 
     .add-button {
-      border-radius: 12px;
+      border-radius: 14px;
       color: #082f49;
-      background: var(--accent);
-      font-size: 24px;
+      background: linear-gradient(135deg, var(--accent), #22d3ee);
+      font-size: 26px;
       line-height: 1;
+      box-shadow: 0 10px 28px rgba(34, 211, 238, 0.25);
     }
 
     .add-button:hover:not(:disabled) {
-      background: #7dd3fc;
+      background: linear-gradient(135deg, #7dd3fc, #67e8f9);
     }
 
     .entries {
@@ -198,9 +361,9 @@
 
     .entry {
       position: relative;
-      padding: 12px 40px 12px 12px;
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      border-radius: 14px;
+      padding: 13px 44px 13px 13px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 16px;
       background: var(--panel-light);
       overflow-wrap: anywhere;
     }
@@ -208,7 +371,8 @@
     .entry-data {
       margin-bottom: 8px;
       white-space: pre-wrap;
-      font-weight: 700;
+      font-weight: 800;
+      line-height: 1.35;
     }
 
     .entry-meta {
@@ -219,15 +383,15 @@
 
     .delete-button {
       position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 28px;
-      height: 28px;
+      top: 9px;
+      right: 9px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       color: #fff;
       background: var(--danger);
-      font-size: 18px;
-      line-height: 28px;
+      font-size: 19px;
+      line-height: 30px;
     }
 
     .delete-button:hover:not(:disabled) {
@@ -235,23 +399,36 @@
     }
 
     .empty {
-      padding: 14px;
-      border: 1px dashed var(--border);
-      border-radius: 14px;
+      padding: 16px;
+      border: 1px dashed rgba(148, 163, 184, 0.28);
+      border-radius: 16px;
       color: var(--muted);
       text-align: center;
+      background: rgba(2, 6, 23, 0.26);
     }
 
-    @media (max-width: 640px) {
+    .empty-board {
+      grid-column: 1 / -1;
+      padding: 28px;
+      border: 1px dashed rgba(56, 189, 248, 0.34);
+      border-radius: 24px;
+      color: #dbeafe;
+      text-align: center;
+      background: rgba(14, 165, 233, 0.08);
+    }
+
+    @media (max-width: 760px) {
       .app {
         padding: 12px;
       }
 
-      .topbar {
+      .hero {
         position: static;
+        border-radius: 22px;
       }
 
       .controls,
+      .field,
       .employee-select,
       .status {
         width: 100%;
@@ -265,32 +442,76 @@
 </head>
 <body>
   <main class="app">
-    <section class="topbar">
-      <h1>Ежедневный отчет</h1>
-      <div class="controls">
-        <label for="employeeSelect">Сотрудник</label>
-        <select id="employeeSelect" class="employee-select">
-          <option value="">Загрузка...</option>
-        </select>
-        <div id="status" class="status">Готово</div>
+    <section class="hero">
+      <div class="hero-top">
+        <div class="title-block">
+          <h1>Ежедневный отчет</h1>
+          <p class="subtitle">Выберите сотрудника один раз, оставьте нужные колонки и быстро добавляйте записи за сегодня.</p>
+        </div>
+        <div class="controls">
+          <div class="field">
+            <label for="employeeSelect">Сотрудник</label>
+            <select id="employeeSelect" class="employee-select">
+              <option value="">Загрузка...</option>
+            </select>
+          </div>
+          <div id="status" class="status">Готово</div>
+        </div>
+      </div>
+      <div class="stats" aria-live="polite">
+        <div class="stat-card">
+          <div class="stat-label">Записей сегодня</div>
+          <div id="totalCount" class="stat-value">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Показано колонок</div>
+          <div id="visibleCount" class="stat-value">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Скрыто колонок</div>
+          <div id="hiddenCount" class="stat-value">0</div>
+        </div>
       </div>
     </section>
+
+    <details class="settings" open>
+      <summary>Настройка видимых полей</summary>
+      <p class="settings-help">Снимите галочки с ненужных категорий — выбор сохранится в этом браузере и останется после перезагрузки.</p>
+      <div class="visibility-actions">
+        <button type="button" id="showAllButton" class="ghost-button">Показать все</button>
+        <button type="button" id="hideEmptyButton" class="ghost-button">Скрыть пустые</button>
+      </div>
+      <div id="visibilityChips" class="chips"></div>
+    </details>
 
     <section id="board" class="board" aria-live="polite"></section>
   </main>
 
   <script>
+    const EMPLOYEE_STORAGE_KEY = 'dailyReport.selectedEmployee';
+    const VISIBLE_ACTIONS_STORAGE_KEY = 'dailyReport.visibleActionTypes';
+
     const state = {
       employees: [],
       actionTypes: [],
-      entries: []
+      entries: [],
+      visibleActionTypes: []
     };
 
     const board = document.getElementById('board');
     const employeeSelect = document.getElementById('employeeSelect');
     const statusElement = document.getElementById('status');
+    const visibilityChips = document.getElementById('visibilityChips');
+    const showAllButton = document.getElementById('showAllButton');
+    const hideEmptyButton = document.getElementById('hideEmptyButton');
+    const totalCount = document.getElementById('totalCount');
+    const visibleCount = document.getElementById('visibleCount');
+    const hiddenCount = document.getElementById('hiddenCount');
 
     document.addEventListener('DOMContentLoaded', loadInitialData);
+    employeeSelect.addEventListener('change', saveSelectedEmployee);
+    showAllButton.addEventListener('click', showAllColumns);
+    hideEmptyButton.addEventListener('click', hideEmptyColumns);
 
     function loadInitialData() {
       setStatus('Загрузка...', 'busy');
@@ -300,8 +521,11 @@
           state.employees = data.employees || [];
           state.actionTypes = data.actionTypes || [];
           state.entries = data.entries || [];
+          state.visibleActionTypes = getSavedVisibleActionTypes(state.actionTypes);
           renderEmployeeSelect();
+          renderVisibilitySettings();
           renderBoard();
+          updateStats();
           setStatus('Готово');
         })
         .withFailureHandler(handleError)
@@ -309,6 +533,7 @@
     }
 
     function renderEmployeeSelect() {
+      const savedEmployee = localStorage.getItem(EMPLOYEE_STORAGE_KEY) || '';
       employeeSelect.innerHTML = '<option value="">Выберите сотрудника</option>';
 
       state.employees.forEach(function(employee) {
@@ -317,12 +542,49 @@
         option.textContent = employee;
         employeeSelect.appendChild(option);
       });
+
+      if (state.employees.indexOf(savedEmployee) !== -1) {
+        employeeSelect.value = savedEmployee;
+        setStatus('Готово: сотрудник сохранен');
+      }
+    }
+
+    function renderVisibilitySettings() {
+      visibilityChips.innerHTML = '';
+
+      state.actionTypes.forEach(function(actionType) {
+        const label = document.createElement('label');
+        const isVisible = state.visibleActionTypes.indexOf(actionType) !== -1;
+        label.className = 'chip' + (isVisible ? '' : ' is-hidden');
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = isVisible;
+        checkbox.addEventListener('change', function() {
+          toggleActionType(actionType, checkbox.checked);
+        });
+
+        const text = document.createElement('span');
+        text.textContent = actionType;
+
+        label.appendChild(checkbox);
+        label.appendChild(text);
+        visibilityChips.appendChild(label);
+      });
     }
 
     function renderBoard() {
       board.innerHTML = '';
 
-      state.actionTypes.forEach(function(actionType) {
+      if (!state.visibleActionTypes.length) {
+        const emptyBoard = document.createElement('div');
+        emptyBoard.className = 'empty-board';
+        emptyBoard.textContent = 'Все поля скрыты. Включите нужные категории в блоке «Настройка видимых полей».';
+        board.appendChild(emptyBoard);
+        return;
+      }
+
+      state.visibleActionTypes.forEach(function(actionType) {
         board.appendChild(createColumn(actionType));
       });
     }
@@ -338,15 +600,25 @@
       const header = document.createElement('div');
       header.className = 'column-header';
 
+      const titleWrap = document.createElement('div');
+      titleWrap.className = 'column-title-wrap';
+
       const title = document.createElement('h2');
       title.className = 'column-title';
       title.textContent = actionType;
+
+      const hint = document.createElement('div');
+      hint.className = 'column-hint';
+      hint.textContent = 'Enter или кнопка + добавит запись';
+
+      titleWrap.appendChild(title);
+      titleWrap.appendChild(hint);
 
       const counter = document.createElement('span');
       counter.className = 'counter';
       counter.textContent = columnEntries.length;
 
-      header.appendChild(title);
+      header.appendChild(titleWrap);
       header.appendChild(counter);
 
       const form = document.createElement('form');
@@ -435,6 +707,7 @@
         return;
       }
 
+      saveSelectedEmployee();
       setFormDisabled(true);
       setStatus('Добавляю...', 'busy');
 
@@ -443,6 +716,7 @@
           state.entries.push(entry);
           input.value = '';
           renderBoard();
+          updateStats();
           setStatus('Готово');
           setFormDisabled(false);
         })
@@ -474,6 +748,7 @@
         .withSuccessHandler(function(entries) {
           state.entries = entries || [];
           renderBoard();
+          updateStats();
           setStatus('Готово');
           setFormDisabled(false);
         })
@@ -482,6 +757,93 @@
           handleError(error);
         })
         .deleteEntry(id);
+    }
+
+    function saveSelectedEmployee() {
+      if (employeeSelect.value) {
+        localStorage.setItem(EMPLOYEE_STORAGE_KEY, employeeSelect.value);
+        setStatus('Готово: сотрудник сохранен');
+      } else {
+        localStorage.removeItem(EMPLOYEE_STORAGE_KEY);
+        setStatus('Готово');
+      }
+    }
+
+    function getSavedVisibleActionTypes(actionTypes) {
+      const saved = localStorage.getItem(VISIBLE_ACTIONS_STORAGE_KEY);
+
+      if (!saved) {
+        return actionTypes.slice();
+      }
+
+      try {
+        const parsed = JSON.parse(saved);
+        const visible = parsed.filter(function(actionType) {
+          return actionTypes.indexOf(actionType) !== -1;
+        });
+        return visible.length ? visible : actionTypes.slice();
+      } catch (error) {
+        localStorage.removeItem(VISIBLE_ACTIONS_STORAGE_KEY);
+        return actionTypes.slice();
+      }
+    }
+
+    function toggleActionType(actionType, isVisible) {
+      if (isVisible && state.visibleActionTypes.indexOf(actionType) === -1) {
+        state.visibleActionTypes.push(actionType);
+        sortVisibleActionTypes();
+      }
+
+      if (!isVisible) {
+        state.visibleActionTypes = state.visibleActionTypes.filter(function(type) {
+          return type !== actionType;
+        });
+      }
+
+      saveVisibleActionTypes();
+      renderVisibilitySettings();
+      renderBoard();
+      updateStats();
+    }
+
+    function showAllColumns() {
+      state.visibleActionTypes = state.actionTypes.slice();
+      saveVisibleActionTypes();
+      renderVisibilitySettings();
+      renderBoard();
+      updateStats();
+      setStatus('Готово: все поля показаны');
+    }
+
+    function hideEmptyColumns() {
+      const actionTypesWithEntries = state.actionTypes.filter(function(actionType) {
+        return state.entries.some(function(entry) {
+          return entry.actionType === actionType;
+        });
+      });
+
+      state.visibleActionTypes = actionTypesWithEntries.length ? actionTypesWithEntries : state.actionTypes.slice();
+      saveVisibleActionTypes();
+      renderVisibilitySettings();
+      renderBoard();
+      updateStats();
+      setStatus(actionTypesWithEntries.length ? 'Готово: пустые поля скрыты' : 'Готово: записей пока нет');
+    }
+
+    function sortVisibleActionTypes() {
+      state.visibleActionTypes.sort(function(first, second) {
+        return state.actionTypes.indexOf(first) - state.actionTypes.indexOf(second);
+      });
+    }
+
+    function saveVisibleActionTypes() {
+      localStorage.setItem(VISIBLE_ACTIONS_STORAGE_KEY, JSON.stringify(state.visibleActionTypes));
+    }
+
+    function updateStats() {
+      totalCount.textContent = state.entries.length;
+      visibleCount.textContent = state.visibleActionTypes.length;
+      hiddenCount.textContent = Math.max(state.actionTypes.length - state.visibleActionTypes.length, 0);
     }
 
     function setFormDisabled(disabled) {
