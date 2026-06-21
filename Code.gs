@@ -138,18 +138,34 @@ function getTodayEntries() {
 
   return values
     .filter(function(row) {
-      return String(row[1]) === today;
+      return normalizeSheetDate(row[1]) === today;
     })
     .map(function(row) {
       return {
         id: String(row[0]),
-        date: String(row[1]),
-        time: String(row[2]),
+        date: normalizeSheetDate(row[1]),
+        time: normalizeSheetTime(row[2]),
         employee: String(row[3]),
         actionType: String(row[4]),
         data: String(row[5])
       };
     });
+}
+
+function normalizeSheetDate(value) {
+  if (value instanceof Date) {
+    return Utilities.formatDate(value, Session.getScriptTimeZone(), 'dd.MM.yyyy');
+  }
+
+  return String(value);
+}
+
+function normalizeSheetTime(value) {
+  if (value instanceof Date) {
+    return Utilities.formatDate(value, Session.getScriptTimeZone(), 'HH:mm:ss');
+  }
+
+  return String(value);
 }
 
 function getOrCreateSheet() {
