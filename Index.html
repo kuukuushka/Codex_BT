@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ежедневный отчет</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-light: #1f2937;
+      --border: #334155;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-dark: #0284c7;
+      --danger: #ef4444;
+      --danger-dark: #b91c1c;
+      --success: #22c55e;
+      --warning: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top left, #1e3a8a 0, transparent 34rem), var(--bg);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    select,
+    input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 12px;
+      color: var(--text);
+      background: #020617;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+    }
+
+    .employee-select {
+      min-width: 240px;
+    }
+
+    .status {
+      min-width: 150px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      text-align: center;
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--success);
+    }
+
+    .status.busy {
+      background: rgba(245, 158, 11, 0.16);
+      color: var(--warning);
+    }
+
+    .status.error {
+      background: rgba(239, 68, 68, 0.16);
+      color: #fecaca;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+
+    .column {
+      min-height: 220px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(17, 24, 39, 0.94);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .column-header {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .column-title {
+      margin: 0;
+      font-size: 17px;
+      color: #f8fafc;
+    }
+
+    .counter {
+      min-width: 32px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      text-align: center;
+      color: #082f49;
+      background: var(--accent);
+      font-weight: 700;
+    }
+
+    .add-form {
+      display: grid;
+      grid-template-columns: 1fr 44px;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      font-weight: 800;
+      transition: transform 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .add-button {
+      border-radius: 12px;
+      color: #082f49;
+      background: var(--accent);
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .add-button:hover:not(:disabled) {
+      background: #7dd3fc;
+    }
+
+    .entries {
+      display: grid;
+      gap: 10px;
+    }
+
+    .entry {
+      position: relative;
+      padding: 12px 40px 12px 12px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 14px;
+      background: var(--panel-light);
+      overflow-wrap: anywhere;
+    }
+
+    .entry-data {
+      margin-bottom: 8px;
+      white-space: pre-wrap;
+      font-weight: 700;
+    }
+
+    .entry-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .delete-button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--danger);
+      font-size: 18px;
+      line-height: 28px;
+    }
+
+    .delete-button:hover:not(:disabled) {
+      background: var(--danger-dark);
+    }
+
+    .empty {
+      padding: 14px;
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 12px;
+      }
+
+      .topbar {
+        position: static;
+      }
+
+      .controls,
+      .employee-select,
+      .status {
+        width: 100%;
+      }
+
+      .board {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="topbar">
+      <h1>Ежедневный отчет</h1>
+      <div class="controls">
+        <label for="employeeSelect">Сотрудник</label>
+        <select id="employeeSelect" class="employee-select">
+          <option value="">Загрузка...</option>
+        </select>
+        <div id="status" class="status">Готово</div>
+      </div>
+    </section>
+
+    <section id="board" class="board" aria-live="polite"></section>
+  </main>
+
+  <script>
+    const state = {
+      employees: [],
+      actionTypes: [],
+      entries: []
+    };
+
+    const board = document.getElementById('board');
+    const employeeSelect = document.getElementById('employeeSelect');
+    const statusElement = document.getElementById('status');
+
+    document.addEventListener('DOMContentLoaded', loadInitialData);
+
+    function loadInitialData() {
+      setStatus('Загрузка...', 'busy');
+
+      google.script.run
+        .withSuccessHandler(function(data) {
+          state.employees = data.employees || [];
+          state.actionTypes = data.actionTypes || [];
+          state.entries = data.entries || [];
+          renderEmployeeSelect();
+          renderBoard();
+          setStatus('Готово');
+        })
+        .withFailureHandler(handleError)
+        .getInitialData();
+    }
+
+    function renderEmployeeSelect() {
+      employeeSelect.innerHTML = '<option value="">Выберите сотрудника</option>';
+
+      state.employees.forEach(function(employee) {
+        const option = document.createElement('option');
+        option.value = employee;
+        option.textContent = employee;
+        employeeSelect.appendChild(option);
+      });
+    }
+
+    function renderBoard() {
+      board.innerHTML = '';
+
+      state.actionTypes.forEach(function(actionType) {
+        board.appendChild(createColumn(actionType));
+      });
+    }
+
+    function createColumn(actionType) {
+      const columnEntries = state.entries.filter(function(entry) {
+        return entry.actionType === actionType;
+      });
+
+      const column = document.createElement('article');
+      column.className = 'column';
+
+      const header = document.createElement('div');
+      header.className = 'column-header';
+
+      const title = document.createElement('h2');
+      title.className = 'column-title';
+      title.textContent = actionType;
+
+      const counter = document.createElement('span');
+      counter.className = 'counter';
+      counter.textContent = columnEntries.length;
+
+      header.appendChild(title);
+      header.appendChild(counter);
+
+      const form = document.createElement('form');
+      form.className = 'add-form';
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        addEntry(actionType, input);
+      });
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Введите данные';
+      input.autocomplete = 'off';
+
+      const button = document.createElement('button');
+      button.type = 'submit';
+      button.className = 'add-button';
+      button.textContent = '+';
+      button.setAttribute('aria-label', 'Добавить запись в ' + actionType);
+
+      form.appendChild(input);
+      form.appendChild(button);
+
+      const entries = document.createElement('div');
+      entries.className = 'entries';
+
+      if (!columnEntries.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = 'Сегодня записей нет';
+        entries.appendChild(empty);
+      } else {
+        columnEntries.forEach(function(entry) {
+          entries.appendChild(createEntryCard(entry));
+        });
+      }
+
+      column.appendChild(header);
+      column.appendChild(form);
+      column.appendChild(entries);
+
+      return column;
+    }
+
+    function createEntryCard(entry) {
+      const card = document.createElement('div');
+      card.className = 'entry';
+
+      const data = document.createElement('div');
+      data.className = 'entry-data';
+      data.textContent = entry.data;
+
+      const meta = document.createElement('div');
+      meta.className = 'entry-meta';
+      meta.textContent = 'Сотрудник: ' + entry.employee + ' · ' + entry.time;
+
+      const deleteButton = document.createElement('button');
+      deleteButton.type = 'button';
+      deleteButton.className = 'delete-button';
+      deleteButton.textContent = '×';
+      deleteButton.setAttribute('aria-label', 'Удалить запись');
+      deleteButton.addEventListener('click', function() {
+        deleteEntry(entry.id);
+      });
+
+      card.appendChild(data);
+      card.appendChild(meta);
+      card.appendChild(deleteButton);
+
+      return card;
+    }
+
+    function addEntry(actionType, input) {
+      const employee = employeeSelect.value;
+      const data = input.value.trim();
+
+      if (!employee) {
+        setStatus('Ошибка: выберите сотрудника', 'error');
+        employeeSelect.focus();
+        return;
+      }
+
+      if (!data) {
+        setStatus('Ошибка: введите данные', 'error');
+        input.focus();
+        return;
+      }
+
+      setFormDisabled(true);
+      setStatus('Добавляю...', 'busy');
+
+      google.script.run
+        .withSuccessHandler(function(entry) {
+          state.entries.push(entry);
+          input.value = '';
+          renderBoard();
+          setStatus('Готово');
+          setFormDisabled(false);
+        })
+        .withFailureHandler(function(error) {
+          setFormDisabled(false);
+          handleError(error);
+        })
+        .addEntry({
+          employee: employee,
+          actionType: actionType,
+          data: data
+        });
+    }
+
+    function deleteEntry(id) {
+      if (!id) {
+        setStatus('Ошибка: нет ID записи', 'error');
+        return;
+      }
+
+      if (!confirm('Удалить эту запись?')) {
+        return;
+      }
+
+      setFormDisabled(true);
+      setStatus('Удаляю...', 'busy');
+
+      google.script.run
+        .withSuccessHandler(function(entries) {
+          state.entries = entries || [];
+          renderBoard();
+          setStatus('Готово');
+          setFormDisabled(false);
+        })
+        .withFailureHandler(function(error) {
+          setFormDisabled(false);
+          handleError(error);
+        })
+        .deleteEntry(id);
+    }
+
+    function setFormDisabled(disabled) {
+      document.querySelectorAll('input, button, select').forEach(function(element) {
+        element.disabled = disabled;
+      });
+    }
+
+    function setStatus(message, type) {
+      statusElement.textContent = message;
+      statusElement.className = 'status' + (type ? ' ' + type : '');
+    }
+
+    function handleError(error) {
+      const message = error && error.message ? error.message : String(error || 'Неизвестная ошибка');
+      setStatus('Ошибка: ' + message, 'error');
+    }
+  </script>
+</body>
+</html>
